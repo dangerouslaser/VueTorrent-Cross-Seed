@@ -1,5 +1,9 @@
 # Vuetorrent with Cross-Seed functionality.
 
+<img src="/screenshots/dialogue.png"></img>
+
+<img src="/screenshots/settings.png"></img>
+
 You need to use a caddy file for this to work due to CORS functionality with cross-seed.
 
 Example below
