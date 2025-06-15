@@ -12,6 +12,12 @@ import { computed, readonly, ref } from 'vue'
 import { useI18nUtils } from '@/composables'
 import { toast } from 'vue3-toastify'
 
+import { useLocalStorage } from '@vueuse/core'
+
+const crossSeedHost = useLocalStorage('crossSeedHost', 'caddy')
+const crossSeedPort = useLocalStorage('crossSeedPort', '8081')
+const crossSeedApiKey = useLocalStorage('crossSeedApiKey', '')
+
 const { t } = useI18nUtils()
 const appStore = useAppStore()
 const dialogStore = useDialogStore()
@@ -328,8 +334,40 @@ function openDurationFormatHelp() {
             append-inner-icon="mdi-help-circle"
             @click:appendInner="openDurationFormatHelp" />
         </v-col>
+        
+        <v-col cols="12" md="4">
+          <v-text-field
+            v-model="crossSeedHost"
+            label="Cross-Seed Host"
+            placeholder="e.g. caddy"
+            hide-details
+            clearable
+          />
+        </v-col>
+        
+        <v-col cols="12" md="4">
+          <v-text-field
+            v-model="crossSeedPort"
+            label="Cross-Seed (Caddy) Port"
+            placeholder="e.g. 8081"
+            hide-details
+            clearable
+          />
+        </v-col>
+        
+        <v-col cols="12" md="4">
+          <v-text-field
+            v-model="crossSeedApiKey"
+            label="Cross-Seed API Key"
+            type="password"
+            hide-details
+            clearable
+          />
+        </v-col>
       </v-row>
     </v-list-item>
+    
+    
 
     <v-list-item>
       <v-row>

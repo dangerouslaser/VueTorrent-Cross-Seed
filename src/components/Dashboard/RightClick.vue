@@ -17,6 +17,41 @@ import { useI18nUtils } from '@/composables'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 
+import type { Torrent } from '@/types/vuetorrent'
+
+import { useLocalStorage } from '@vueuse/core'
+
+const crossSeedHost = useLocalStorage('crossSeedHost', 'caddy')
+const crossSeedPort = useLocalStorage('crossSeedPort', '8081')
+const crossSeedApiKey = useLocalStorage('crossSeedApiKey', '')
+
+function triggerWebhook(torrent?: Torrent) {
+  if (!torrent) return
+
+  fetch(`http://${crossSeedHost.value}:${crossSeedPort.value}/api/webhook?apikey=${crossSeedApiKey.value}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      infoHash: torrent.hash,
+      ignoreCrossSeeds: false,
+      ignoreExcludeRecentSearch: true,
+      ignoreExcludeOlder: true,
+      ignoreBlockList: false,
+      includeSingleEpisodes: true,
+      includeNonVideos: true
+    })
+  })
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP error! ${res.status}`)
+      toast.success('Cross-Seed webhook sent!')
+    })
+    .catch(err => {
+      console.error('Webhook error', err)
+      toast.error('Cross-Seed webhook failed.')
+    })
+}
+
+
 defineProps<{
   rightClickProperties: { isVisible: boolean; offset: [number, number] }
 }>()
@@ -428,6 +463,20 @@ const menuData = computed<RightClickMenuEntryType[]>(() => [
                 <v-btn color="red" density="compact" variant="plain" icon="mdi-delete-forever" v-bind="props" @click="deleteTorrents" />
               </template>
               <span>{{ t('dashboard.right_click.top.delete') }}</span>
+            </v-tooltip>
+            
+            <v-tooltip location="top">
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  color="teal"
+                  density="compact"
+                  variant="plain"
+                  icon="mdi-wifi"
+                  v-bind="props"
+                  @click="triggerWebhook(torrent)"
+                />
+              </template>
+              <span>Trigger Cross-Seed</span>
             </v-tooltip>
           </div>
         </v-list-item>
