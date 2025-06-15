@@ -4,7 +4,7 @@ You need to use a caddy file for this to work due to CORS functionality with cro
 
 Example below
 
-<code>
+```
 :{$CADDY_PORT:-8081} {
   reverse_proxy {$CROSS_SEED_HOST:-cross-seed}:{$CROSS_SEED_PORT:-2468}
 
@@ -20,11 +20,11 @@ Example below
     respond "" 204
   }
 }
-</code>
+```
 
 Docker Compose for caddy
 
-<code>
+```
   caddy:
     image: caddy:alpine
     container_name: caddy
@@ -38,4 +38,4 @@ Docker Compose for caddy
       CADDY_PORT: 8081
       CROSS_SEED_HOST: cross-seed
       CROSS_SEED_PORT: 2468
-</code>
+```
